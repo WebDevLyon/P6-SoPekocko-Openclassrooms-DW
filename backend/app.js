@@ -1,9 +1,7 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-const auth = require("./middleware/auth");
 
-const Sauce = require("./model/Sauce");
 const path = require('path');
 
 //Import des routes
