@@ -3,11 +3,12 @@ const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 const auth = require("./middleware/auth");
 
-//Import du modele de la sauce
 const Sauce = require("./model/Sauce");
+const path = require('path');
 
 //Import des routes
 const userRoutes = require("./route/user");
+const sauceRoutes = require('./route/sauce');
 
 //Connection à la base de donnée MongoDB
 mongoose
@@ -38,52 +39,12 @@ app.use((req, res, next) => {
 //Rendre la requete exploitable
 app.use(bodyParser.json());
 
-//Création d'une sauce
-app.post("/api/sauces", auth, (req, res, next) => {
-  const sauce = new Sauce({
-    ...req.body,
-  });
-  sauce
-    .save()
-    .then((sauce) => {
-      res.status(201).json({ sauce });
-    })
-    .catch((error) => {
-      res.status(400).json({
-        error: error,
-      });
-    });
-});
-
-//Récupère une sauce unique par l'id
-app.get("/api/sauces/:id", auth, (req, res, next) => {
-  Sauce.findOne({
-    _id: req.params.id,
-  })
-    .then((sauce) => {
-      res.status(200).json(sauce);
-    })
-    .catch((error) => {
-      res.status(404).json({
-        error: error,
-      });
-    });
-});
-
-//Récupération de toutes les sauces
-app.get("/api/sauces", auth, (req, res, next) => {
-  Sauce.find()
-    .then((sauces) => {
-      res.status(200).json(sauces);
-    })
-    .catch((error) => {
-      res.status(400).json({
-        error: error,
-      });
-    });
-});
+//Gestion de la ressource image de façon statique
+app.use('/images', express.static(path.join(__dirname, 'images')));
 
 //Routes attendues
 app.use("/api/auth", userRoutes);
+app.use('/api/sauces', sauceRoutes);
+
 
 module.exports = app;
