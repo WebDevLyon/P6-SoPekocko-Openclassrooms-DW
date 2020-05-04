@@ -1,11 +1,13 @@
 const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
-
-const app = express();
+const auth = require("./middleware/auth");
 
 //Import du modele de la sauce
 const Sauce = require("./model/Sauce");
+
+//Import des routes
+const userRoutes = require("./route/user");
 
 //Connection à la base de donnée MongoDB
 mongoose
@@ -15,6 +17,9 @@ mongoose
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
+
+//Création d'application express
+const app = express();
 
 //Header pour contourner erreurs de CORS
 app.use((req, res, next) => {
@@ -34,18 +39,9 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 
 //Création d'une sauce
-app.post("/api/sauces", (req, res, next) => {
+app.post("/api/sauces", auth, (req, res, next) => {
   const sauce = new Sauce({
-    name: "AieAieAie",
-    manufacturer: "Nicolas",
-    description: "Ca arrache la gueule",
-    mainPepper: "Piment",
-    imageUrl: "http",
-    heat: 10,
-    likes: 10,
-    dislikes: 1,
-    usersLiked: ["Nicolas", "Fanny"],
-    usersDisLiked: [],
+    ...req.body,
   });
   sauce
     .save()
@@ -60,7 +56,7 @@ app.post("/api/sauces", (req, res, next) => {
 });
 
 //Récupère une sauce unique par l'id
-app.get('/api/sauces/:id', (req, res, next) => {
+app.get("/api/sauces/:id", auth, (req, res, next) => {
   Sauce.findOne({
     _id: req.params.id,
   })
@@ -75,7 +71,7 @@ app.get('/api/sauces/:id', (req, res, next) => {
 });
 
 //Récupération de toutes les sauces
-app.get("/api/sauces", (req, res, next) => {
+app.get("/api/sauces", auth, (req, res, next) => {
   Sauce.find()
     .then((sauces) => {
       res.status(200).json(sauces);
@@ -86,5 +82,8 @@ app.get("/api/sauces", (req, res, next) => {
       });
     });
 });
+
+//Routes attendues
+app.use("/api/auth", userRoutes);
 
 module.exports = app;
