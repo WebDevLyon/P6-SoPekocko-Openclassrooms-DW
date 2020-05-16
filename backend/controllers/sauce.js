@@ -129,7 +129,7 @@ exports.likeSauce = (req, res, next) => {
         $push: { usersLiked: req.body.userId },
         _id: req.params.id
       })
-        .then(() => { res.status(201).json({ message: 'Ton avis a été pris en compte!' }); })
+        .then(() => { res.status(201).json({ message: 'Ton like a été pris en compte!' }); })
         .catch((error) => { res.status(400).json({ error: error }); });
       break;
     //likes = -1
@@ -140,7 +140,7 @@ exports.likeSauce = (req, res, next) => {
         $push: { usersDisliked: req.body.userId },
         _id: req.params.id
       })
-        .then(() => { res.status(201).json({ message: 'Ton avis a été pris en compte!' }); })
+        .then(() => { res.status(201).json({ message: 'Ton dislike a été pris en compte!' }); })
         .catch((error) => { res.status(400).json({ error: error }); });
       break;
     default:

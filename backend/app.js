@@ -2,11 +2,14 @@ const express = require("express");
 const bodyParser = require("body-parser");
 const mongoose = require("mongoose");
 
-const path = require('path');
+const path = require("path");
+
+//Création d'application express
+const app = express();
 
 //Import des routes
 const userRoutes = require("./route/user");
-const sauceRoutes = require('./route/sauce');
+const sauceRoutes = require("./route/sauce");
 
 //Connection à la base de donnée MongoDB
 mongoose
@@ -16,9 +19,6 @@ mongoose
   )
   .then(() => console.log("Connexion à MongoDB réussie !"))
   .catch(() => console.log("Connexion à MongoDB échouée !"));
-
-//Création d'application express
-const app = express();
 
 //Header pour contourner erreurs de CORS
 app.use((req, res, next) => {
@@ -38,11 +38,10 @@ app.use((req, res, next) => {
 app.use(bodyParser.json());
 
 //Gestion de la ressource image de façon statique
-app.use('/images', express.static(path.join(__dirname, 'images')));
+app.use("/images", express.static(path.join(__dirname, "images")));
 
 //Routes attendues
 app.use("/api/auth", userRoutes);
-app.use('/api/sauces', sauceRoutes);
-
+app.use("/api/sauces", sauceRoutes);
 
 module.exports = app;
